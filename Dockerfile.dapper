@@ -1,7 +1,6 @@
 FROM ubuntu:22.04
 
-# Add jq
-RUN apt update && apt install -y skopeo jq
+RUN apt update && apt install -y skopeo jq curl && mkdir -p /opt/mywork
 
 # Add docker cli
 COPY --from=docker.io/library/docker:20.10.21 /usr/local/bin/docker /usr/local/bin/
@@ -10,7 +9,9 @@ COPY --from=docker.io/library/docker:20.10.21 /usr/local/bin/docker /usr/local/b
 RUN mkdir -p /root/.docker/cli-plugins/ && curl -sLo /root/.docker/cli-plugins/docker-buildx https://github.com/docker/buildx/releases/download/v0.9.1/buildx-v0.9.1.linux-amd64 && chmod a+x /root/.docker/cli-plugins/*
 
 # Add scripts
-COPY image-mirror.sh entrypoint.sh run.sh /
+COPY image-mirror.sh entrypoint.sh run.sh /opt/mywork/
 ENV DAPPER_ENV SRC_REGISTRY SRC_USERNAME SRC_PASSWORD DEST_REGISTRY DEST_USERNAME DEST_PASSWORD WORKERS
+ENV DAPPER_DOCKER_SOCKET true
+WORKDIR /opt/mywork
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/opt/mywork/entrypoint.sh"]
