@@ -9,4 +9,6 @@ if [ ! -f "${INFILE}" ]; then
 fi
 
 echo "Reading SOURCE from ${INFILE}"
-xargs -P ${WORKERS:-1} -I % bash -c 'source ./image-mirror.sh && mirror_image %' < ${INFILE}
+xargs -I % bash -c "echo 'source ./image-mirror.sh && mirror_image %' >> .temp-images.txt" < ${INFILE}
+xargs -P ${WORKERS:-1} -I % bash -c "%" < .temp-images.txt
+rm -f .temp-images.txt
