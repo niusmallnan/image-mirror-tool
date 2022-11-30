@@ -7,7 +7,7 @@ RUN yum -y update && yum -y install jq vim && yum -y clean all && rm -rf /var/ca
 COPY --from=docker.io/library/docker:20.10.21 /usr/local/bin/docker /usr/local/bin/
 
 # Add buildx plugin from github
-RUN mkdir -p /root/.docker/cli-plugins/ && curl -sLo /root/.docker/cli-plugins/docker-buildx https://github.com/docker/buildx/releases/download/v0.9.1/buildx-v0.9.1.linux-amd64 && chmod a+x /root/.docker/cli-plugins/*
+RUN mkdir -p /root/.docker/cli-plugins/ && curl -sLo /root/.docker/cli-plugins/docker-buildx https://github.com/docker/buildx/releases/download/v0.8.2/buildx-v0.8.2.linux-amd64 && chmod a+x /root/.docker/cli-plugins/*
 
 # Add scripts
 COPY image-mirror.sh entrypoint.sh run.sh /opt/mywork/
