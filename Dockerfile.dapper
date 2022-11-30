@@ -1,6 +1,6 @@
 FROM quay.io/skopeo/stable:v1.10.0
 
-RUN yum -y update && yum -y install jq && yum -y clean all && rm -rf /var/cache/dnf/* /var/log/dnf* /var/log/yum* \
+RUN yum -y update && yum -y install jq vim && yum -y clean all && rm -rf /var/cache/dnf/* /var/log/dnf* /var/log/yum* \
     && mkdir -p /opt/mywork
 
 # Add docker cli

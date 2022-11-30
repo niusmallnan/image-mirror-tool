@@ -63,7 +63,7 @@ function mirror_image {
                       | reverse
                       | map(.digest + " " + .platform.variant)
                       | join("\n")' <<< ${MANIFEST});
-        while read DIGEST VARIANT; do 
+        while read DIGEST VARIANT; do
           # Add skopeo flags for multi-variant architectures (arm, mostly)
           if [ -z "${VARIANT}" ] || [ "${VARIANT}" == "null" ]; then
             VARIANT=""
@@ -79,7 +79,8 @@ function mirror_image {
           else
             # We have to copy the full descriptor here; if we just point buildx at another tag or hash it will lose the variant
             # info since that's not stored anywhere outside the manifest list itself.
-            copy_if_changed "${SOURCE}@${DIGEST}" "${DEST}-${ARCH}${VARIANT}" "${ARCH}"
+            SOURCE_SPEC=${SOURCE%:*}
+            copy_if_changed "${SOURCE_SPEC}@${DIGEST}" "${DEST}-${ARCH}${VARIANT}" "${ARCH}"
             DESCRIPTOR=$(jq -c -r --arg DIGEST "${DIGEST}" '.manifests | map(select(.digest == $DIGEST)) | first' <<< ${MANIFEST})
             SOURCES+=("${DESCRIPTOR}")
             DIGESTS+=("${DIGEST}")
@@ -90,7 +91,7 @@ function mirror_image {
 
     # Standalone manifests don't include architecture info, we have to get that from the image config
     elif [ "${MEDIATYPE}" == "application/vnd.docker.distribution.manifest.v2+json" ]; then
-      echo "${SOURCE} is manifest.v2"
+      echo "${SOURCE} is manifest.v2, but not include arch info"
       CONFIG=$(skopeo inspect docker://${SOURCE} --config --raw)
       ARCH=$(jq -r '.architecture' <<< ${CONFIG})
       DIGEST=$(jq -r '.config.digest' <<< ${MANIFEST})
@@ -99,7 +100,7 @@ function mirror_image {
         SOURCES+=("${DEST}-${ARCH}")
         DIGESTS+=("${DIGEST}")
       fi
-    else 
+    else
       echo "${SOURCE} has unknown mediaType ${MEDIATYPE}"
       return 1
     fi
