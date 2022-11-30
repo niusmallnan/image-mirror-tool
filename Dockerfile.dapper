@@ -1,6 +1,7 @@
-FROM ubuntu:22.04
+FROM quay.io/skopeo/stable:v1.10.0
 
-RUN apt update && apt install -y skopeo jq curl && mkdir -p /opt/mywork
+RUN yum -y update && yum -y install jq && yum -y clean all && rm -rf /var/cache/dnf/* /var/log/dnf* /var/log/yum* \
+    && mkdir -p /opt/mywork
 
 # Add docker cli
 COPY --from=docker.io/library/docker:20.10.21 /usr/local/bin/docker /usr/local/bin/
