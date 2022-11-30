@@ -39,7 +39,7 @@ function mirror_image {
   SOURCE="${1}"
   DEST="${DEST_REGISTRY}/${SOURCE#$SRC_REGISTRY/}"
 
-  trap 'echo -e "===\nFailed copying image for ${SOURCE}\n==="' ERR
+  trap 'echo -e "===\nFailed copying image for ${SOURCE}\n===" && echo ${SOURCE} >> failed_images.txt' ERR
 
   # Grab raw manifest or manifest list and extract schema info
   MANIFEST=$(skopeo inspect docker://${SOURCE} --raw)
@@ -139,13 +139,3 @@ function mirror_image {
   fi
 }
 
-# Figure out if we should read input from a file
-# If we're given a file, verify that it exists
-INFILE="${1}"
-if [ ! -f "${INFILE}" ]; then
-  echo "File ${INFILE} does not exist!"
-  exit 1
-fi
-
-echo "Reading SOURCE from ${INFILE}"
-cat ${INFILE} | xargs -P ${WORKERS:-1} mirror_image

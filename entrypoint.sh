@@ -13,4 +13,4 @@ if [ ! -z "${DEST_USERNAME:-}" ] && [ ! -z "${DEST_PASSWORD:-}" ]; then
   docker login ${DEST_REGISTRY:-docker.io} --username=${DEST_USERNAME} --password-stdin <<< ${DEST_PASSWORD}
 fi
 
-exec ${BASEDIR}/image-mirror.sh $@
+exec ${BASEDIR}/run.sh $@
