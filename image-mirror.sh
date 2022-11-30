@@ -3,6 +3,8 @@
 set -uo pipefail
 export DOCKER_CLI_EXPERIMENTAL="enabled"
 
+echo "##### Current Pid: $$ #####"
+
 ARCH_LIST="amd64 arm64"
 
 function copy_if_changed {
